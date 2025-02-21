@@ -1,13 +1,18 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
-const ToDoList = () => {
+const TodoList = () => {
   const [todos, setTodos] = useState(() => {
-    return JSON.parse(localStorage.getItem("todos")) || [];
+    try {
+      return JSON.parse(localStorage.getItem("todos")) || [];
+    } catch (error) {
+      console.log(error, "error on localstorage fetch");
+      return [];
+    }
   });
+
   const [inputVal, setInputVal] = useState("");
   const [editIndex, setEditIndex] = useState(null);
 
-  // Save to localStorage whenever `todos` updates
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
@@ -17,78 +22,71 @@ const ToDoList = () => {
   };
 
   const handleAdd = () => {
-    if (inputVal?.trim() === "") return;
+    if (inputVal?.trim() === "") {
+      return;
+    }
 
     if (editIndex !== null) {
-      // Update existing item
       setTodos((prev) =>
         prev.map((todo, index) => (index === editIndex ? inputVal : todo))
       );
       setEditIndex(null);
     } else {
-      // Add new item
       setTodos([...todos, inputVal]);
     }
     setInputVal("");
   };
 
-  const handleDelete = (index) => {
-    setTodos((prev) => prev.filter((todo, i) => i !== index));
+  const handleEdit = (index) => {
+    setEditIndex(index);
+    setInputVal(todos[index]);
   };
 
-  const handleEdit = (index) => {
-    setInputVal(todos[index]);
-    setEditIndex(index);
+  const handleDelete = (index) => {
+    setTodos((prev) => prev.filter((todo, idx) => idx !== index));
   };
 
   return (
-    <>
-      <div className="mt-4 flex items-center justify-center flex-col">
-        <h1 className="text-2xl font-bold mb-2">To do List</h1>
-        <div className="mb-4">
-          <input
-            type="text"
-            value={inputVal}
-            onChange={handleInput}
-            placeholder="Add To Do's"
-            className="border border-gray-300 rounded-md py-2 px-4 mr-2"
-          />
-          <button
-            className={`${
-              editIndex !== null ? "bg-green-500" : "bg-blue-500"
-            } hover:bg-opacity-80 text-white font-semibold py-2 px-4 rounded`}
-            onClick={handleAdd}
-          >
-            {editIndex !== null ? "Update" : "Add +"}
-          </button>
-        </div>
+    <div className="flex flex-col items-center justify-center text-black">
+      <h1 className="font-bold text-2xl">To do List CRUD</h1>
+      <div>
+        <input
+          type="text"
+          placeholder="Add List"
+          className="border rounded p-2 border-gray-500 mb-2
+          "
+          value={inputVal}
+          onChange={(e) => handleInput(e)}
+        />
+        <button className="px-6 py-2 bg-amber-400" onClick={() => handleAdd()}>
+          {editIndex !== null ? "Update" : "Add +"}
+        </button>
+      </div>
+      <div>
         <ul>
-          {todos?.map((item, index) => (
-            <li
-              key={index}
-              className="flex justify-center gap-6 mb-2 w-1/2 items-center"
-            >
-              {item}
+          {todos.map((todo, index) => (
+            <li key={index} className="flex items-center">
+              {todo}
               <div className="flex gap-2">
                 <button
-                  className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
+                  className="text-blue-500"
                   onClick={() => handleEdit(index)}
                 >
                   Edit
                 </button>
                 <button
-                  className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                  className="text-red-500"
                   onClick={() => handleDelete(index)}
                 >
-                  Remove
+                  Delete
                 </button>
               </div>
             </li>
           ))}
         </ul>
       </div>
-    </>
+    </div>
   );
 };
 
-export default ToDoList;
+export default TodoList;
