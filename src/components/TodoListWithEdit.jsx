@@ -48,34 +48,39 @@ const TodoList = () => {
 
   return (
     <div className="flex flex-col items-center justify-center text-black">
-      <h1 className="font-bold text-2xl">To do List CRUD</h1>
+      <h1 className="font-bold text-2xl mb-4">To do List CRUD</h1>
       <div>
         <input
           type="text"
           placeholder="Add List"
-          className="border rounded p-2 border-gray-500 mb-2
+          className="border rounded-lg px-6 py-2 mr-2 border-gray-400 mb-2
           "
           value={inputVal}
           onChange={(e) => handleInput(e)}
         />
-        <button className="px-6 py-2 bg-amber-400" onClick={() => handleAdd()}>
+        <button
+          className={`px-6 py-2 rounded-lg  cursor-pointer hover:bg-gray-200 ${
+            editIndex !== null ? "bg-green-500" : "bg-amber-400"
+          }`}
+          onClick={() => handleAdd()}
+        >
           {editIndex !== null ? "Update" : "Add +"}
         </button>
       </div>
       <div>
         <ul>
           {todos.map((todo, index) => (
-            <li key={index} className="flex items-center">
-              {todo}
-              <div className="flex gap-2">
+            <li key={index} className="flex w-full items-center justify-start">
+              <div className="flex w-full gap-2 justify-between">
+                <span className="flex-grow truncate">{todo}</span>
                 <button
-                  className="text-blue-500"
+                  className="text-blue-500 cursor-pointer hover:underline"
                   onClick={() => handleEdit(index)}
                 >
                   Edit
                 </button>
                 <button
-                  className="text-red-500"
+                  className="text-red-500 cursor-pointer hover:underline"
                   onClick={() => handleDelete(index)}
                 >
                   Delete
