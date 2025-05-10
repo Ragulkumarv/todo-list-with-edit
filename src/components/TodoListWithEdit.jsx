@@ -27,8 +27,10 @@ const TodoList = () => {
     }
 
     if (editIndex !== null) {
-      setTodos((prev) =>
-        prev.map((todo, index) => (index === editIndex ? inputVal : todo))
+      setTodos(
+        (prev) =>
+          prev.map((todo, index) => (index === editIndex ? inputVal : todo))
+        //if the current index matches editIndex, it means that's the todo being edited, so you replace it with inputVal
       );
       setEditIndex(null);
     } else {
